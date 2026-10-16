@@ -1,0 +1,426 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080a10">
+  <title>JAVIRUS AI</title>
+
+  <!-- Official Puter.js library -->
+  <script src="https://js.puter.com/v2/"></script>
+
+  <style>
+    :root {
+      --bg: #080a10;
+      --panel: #10131d;
+      --border: #282d3c;
+      --accent: #b6a0ff;
+      --text: #f3f2fa;
+      --muted: #9ba1b5;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 5%;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      font-size: 23px;
+      font-weight: 800;
+      letter-spacing: 3px;
+    }
+
+    .brand span {
+      color: var(--accent);
+    }
+
+    .status {
+      font-size: 12px;
+      color: #a7e8c4;
+    }
+
+    main {
+      width: min(820px, 100%);
+      margin: 0 auto;
+      padding: 30px 20px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .welcome {
+      text-align: center;
+      padding: 30px 0;
+    }
+
+    .orb {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      background: radial-gradient(
+        circle at 35% 30%,
+        #eee8ff,
+        #9b7aff 35%,
+        #38266e 72%,
+        #11121d
+      );
+      box-shadow: 0 0 45px #8f6bff35;
+    }
+
+    h1 {
+      font-size: clamp(28px, 5vw, 38px);
+      margin: 0 0 12px;
+    }
+
+    .welcome p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    #chat {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding-bottom: 20px;
+    }
+
+    .message {
+      max-width: 90%;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      line-height: 1.65;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+    }
+
+    .user {
+      align-self: flex-end;
+      background: #29213e;
+      border-color: #4a3a6a;
+    }
+
+    .assistant {
+      align-self: flex-start;
+      background: var(--panel);
+    }
+
+    .label {
+      display: block;
+      color: var(--accent);
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      font-weight: 700;
+      margin-bottom: 7px;
+    }
+
+    .composer {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 12px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 65px;
+      max-height: 180px;
+      resize: vertical;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font: inherit;
+      padding: 8px;
+    }
+
+    .composer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding-top: 8px;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    button {
+      cursor: pointer;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 15px;
+      background: #1a1e2b;
+      color: var(--text);
+      font: inherit;
+    }
+
+    button:hover {
+      border-color: var(--accent);
+    }
+
+    #send {
+      background: var(--accent);
+      color: #100b1c;
+      border-color: var(--accent);
+      font-weight: 700;
+      min-width: 85px;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    #new-chat {
+      margin-top: 12px;
+      align-self: flex-end;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 11px;
+      padding: 20px;
+    }
+
+    @media (max-width: 500px) {
+      header {
+        padding: 17px;
+      }
+
+      main {
+        padding: 20px 14px;
+      }
+
+      .message {
+        max-width: 96%;
+      }
+
+      .hint {
+        max-width: 180px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="brand">JAVI<span>RUS</span></div>
+    <div class="status">● AI ASSISTANT</div>
+  </header>
+
+  <main>
+    <section class="welcome" id="welcome">
+      <div class="orb"></div>
+      <h1>Meet JAVIRUS</h1>
+      <p>
+        Your personal AI assistant.<br>
+        Ask questions. Explore ideas. Build something extraordinary.
+      </p>
+    </section>
+
+    <section id="chat" aria-live="polite"></section>
+
+    <section class="composer">
+      <textarea
+        id="prompt"
+        placeholder="Message JAVIRUS..."
+        aria-label="Message JAVIRUS"
+      ></textarea>
+
+      <div class="composer-bottom">
+        <span class="hint">
+          AI can make mistakes. Verify important information.
+        </span>
+        <button id="send" type="button">Send ↗</button>
+      </div>
+    </section>
+
+    <button id="new-chat" type="button">＋ New chat</button>
+  </main>
+
+  <footer>
+    JAVIRUS AI · An independent experimental project
+  </footer>
+
+  <script>
+    const chat = document.getElementById("chat");
+    const promptBox = document.getElementById("prompt");
+    const sendButton = document.getElementById("send");
+    const welcome = document.getElementById("welcome");
+
+    const systemMessage = {
+      role: "system",
+      content:
+        "You are JAVIRUS, a helpful personal AI assistant. " +
+        "Be friendly, professional, honest, and practical. " +
+        "Explain technical concepts in beginner-friendly language. " +
+        "Never claim to have completed an action you did not perform."
+    };
+
+    let messages = [systemMessage];
+
+    function addMessage(role, text) {
+      const bubble = document.createElement("div");
+      bubble.className = "message " + role;
+
+      const label = document.createElement("span");
+      label.className = "label";
+      label.textContent = role === "user" ? "YOU" : "JAVIRUS";
+
+      const content = document.createElement("div");
+      content.textContent = text;
+
+      bubble.appendChild(label);
+      bubble.appendChild(content);
+      chat.appendChild(bubble);
+
+      bubble.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+      });
+
+      return content;
+    }
+
+    function showError(error) {
+      if (error instanceof Error) {
+        return error.message;
+      }
+
+      if (typeof error === "string") {
+        return error;
+      }
+
+      try {
+        return JSON.stringify(error, null, 2);
+      } catch {
+        return String(error);
+      }
+    }
+
+    async function sendMessage() {
+      const text = promptBox.value.trim();
+
+      if (!text || sendButton.disabled) {
+        return;
+      }
+
+      if (typeof puter === "undefined" || !puter.ai) {
+        addMessage(
+          "assistant",
+          "Puter.js did not load. Check your internet connection, " +
+          "then refresh the page and try again."
+        );
+        return;
+      }
+
+      welcome.style.display = "none";
+      addMessage("user", text);
+
+      messages.push({
+        role: "user",
+        content: text
+      });
+
+      promptBox.value = "";
+      sendButton.disabled = true;
+      sendButton.textContent = "Thinking...";
+
+      const replyBox = addMessage(
+        "assistant",
+        "JAVIRUS is thinking..."
+      );
+
+      try {
+        // Request a response using Puter.js.
+        // No API key is entered in this code.
+        const response = await puter.ai.chat(messages, {
+          model: "gpt-5.4-nano",
+          normalize: true
+        });
+
+        const content = response?.message?.content;
+
+        let reply;
+
+        if (typeof content === "string" && content.trim()) {
+          reply = content;
+        } else if (typeof response?.text === "string") {
+          reply = response.text;
+        } else {
+          throw new Error(
+            "The AI returned no text. Please try another message."
+          );
+        }
+
+        replyBox.textContent = reply;
+
+        messages.push({
+          role: "assistant",
+          content: reply
+        });
+
+      } catch (error) {
+        // Remove the unanswered user message from history.
+        messages.pop();
+
+        replyBox.textContent =
+          "Sorry, JAVIRUS couldn't get an AI response.\n\n" +
+          "Possible causes: sign-in or permission required, " +
+          "model unavailable, usage limit, or internet problem.\n\n" +
+          "Error details:\n" + showError(error);
+
+        console.error("JAVIRUS AI error:", error);
+
+      } finally {
+        sendButton.disabled = false;
+        sendButton.textContent = "Send ↗";
+        promptBox.focus();
+      }
+    }
+
+    sendButton.addEventListener("click", sendMessage);
+
+    promptBox.addEventListener("keydown", function(event) {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+      }
+    });
+
+    document.getElementById("new-chat").addEventListener(
+      "click",
+      function() {
+        messages = [systemMessage];
+        chat.replaceChildren();
+        welcome.style.display = "block";
+        promptBox.value = "";
+        promptBox.focus();
+      }
+    );
+  </script>
+</body>
+</html>
